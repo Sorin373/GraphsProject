@@ -8,7 +8,7 @@
 
 using namespace std;
 
-const int MAXN = 100;
+constexpr int MAXN = 100;
 
 int n, v[MAXN];
 bool **adj;
@@ -17,6 +17,13 @@ char **nume;
 void citireDate()
 {
     ifstream fin("data.in");
+
+    if (!fin.is_open())
+    {
+        cerr << "Error!" << endl;
+        return;
+    }
+
     fin >> n;
 
     nume = new char *[n];
@@ -36,7 +43,14 @@ void citireDate()
 
     int x, y;
     while (fin >> x >> y)
+    {
+        if (x > n || y > n)
+        {
+            cerr << "Input invalid!" << endl;
+            return;
+        }
         adj[x][y] = adj[y][x] = true;
+    }
 
     fin.close();
 }
