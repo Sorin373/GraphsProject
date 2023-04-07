@@ -6,6 +6,10 @@
 
 #include "functions.hpp"
 
+#ifdef _WIN32
+#include <conio.h>
+#endif
+
 using namespace std;
 
 constexpr int MAXN = 100;

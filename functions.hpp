@@ -3,7 +3,6 @@
 
 #include <iostream>
 #include <iomanip>
-#include <termios.h>
 #include <string.h>
 
 #ifdef _WIN32
@@ -12,8 +11,8 @@
 #include <unistd.h>
 #endif
 
-using namespace std;
-
+#ifdef  __linux__ 
+#include <termios.h>
 char getch()
 {
     char buf = 0;
@@ -36,6 +35,9 @@ char getch()
     printf("%c\n", buf);
     return buf;
 }
+#endif
+
+using namespace std;
 
 void underline(const unsigned int vWidth)
 {
@@ -50,11 +52,11 @@ void underline(const unsigned int vWidth)
 
 void clear_screen()
 {
-#ifdef WINDOWS
-    std::clear_screen();
+#ifdef _WIN32
+    system("CLS");
 #else
     // POSIX
-    std::system("clear");
+    system("clear");
 #endif
 }
 
