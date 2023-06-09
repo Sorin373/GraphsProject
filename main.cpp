@@ -3,6 +3,7 @@
 #include <iomanip>
 #include <string.h>
 #include <cstring>
+#include <vector>
 
 #include "functions.hpp"
 
@@ -205,36 +206,6 @@ void grafComplet()
          << " muchii pana la un graf complet";
 }
 
-void eliberareMemorie()
-{
-    if (nume != nullptr)
-    {
-        for (int i = 0; i < n; i++)
-        {
-            if (nume[i] != nullptr)
-            {
-                delete[] nume[i];
-                nume[i] = nullptr;
-            }
-        }
-        delete[] nume;
-        nume = nullptr;
-    }
-
-    if (adj != nullptr)
-    {
-        for (int i = 0; i < n; i++)
-        {
-            if (adj[i] != nullptr)
-            {
-                delete[] adj[i];
-                adj[i] = nullptr;
-            }
-        }
-        adj = nullptr;
-    }
-}
-
 int main()
 {
     citireDate();
@@ -287,7 +258,15 @@ int main()
         }
     } while (meniu != 0);
 
-    eliberareMemorie();
+    for (int i = 0; i < n; i++)
+        delete[] nume[i];
+
+    delete[] nume;
+
+    for (int i = 1; i <= n; i++)
+        delete[] adj[i];
+
+    delete[] adj;
 
     return 0;
 }

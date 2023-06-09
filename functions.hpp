@@ -5,14 +5,10 @@
 #include <iomanip>
 #include <string.h>
 
-#ifdef _WIN32
-#include <windows.h>
-#else
-#include <unistd.h>
-#endif
-
+#pragma region 
 #ifdef  __linux__ 
 #include <termios.h>
+#include <unistd.h>
 char getch()
 {
     char buf = 0;
@@ -35,7 +31,12 @@ char getch()
     printf("%c\n", buf);
     return buf;
 }
+#else 
+#ifdef _WIN32
+#include <windows.h>
 #endif
+#endif
+#pragma endregion
 
 using namespace std;
 
