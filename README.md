@@ -1,6 +1,6 @@
 # Overview
 
-This project focuses on the implementation and utilization of various graph theories to analyze and manipulate graphs. Specifically, we employ concepts such as complete graphs, adjacency matrices, gradient maximization, and gradient descent to perform various graph-related operations.
+This project focuses on the implementation and utilization of various graph theories to analyze and manipulate graphs. Specifically, we employ concepts such as complete graphs, adjacency matrices and degree of a node.
 
 # Graph Theories
 
