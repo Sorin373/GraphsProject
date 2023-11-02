@@ -1,15 +1,8 @@
 #include <iostream>
 #include <fstream>
 #include <iomanip>
-#include <string.h>
 #include <cstring>
-#include <vector>
-
-#include "functions.hpp"
-
-#ifdef _WIN32
 #include <conio.h>
-#endif
 
 using namespace std;
 
@@ -19,13 +12,24 @@ int n, v[MAXN];
 bool **adj;
 char **nume;
 
-void citireDate()
+void underline(const unsigned int vWidth)
+{
+    cout << setw(5 - 2) << " ";
+    char fillLine;
+    fillLine = cout.fill('_');
+    cout.width(vWidth);
+    cout << '_' << endl;
+    cout.fill(fillLine);
+    cout << endl;
+}
+
+void getData()
 {
     ifstream fin("data.in");
 
     if (!fin.is_open())
     {
-        cerr << "Error!" << endl;
+        cerr << "Failed to open file!" << endl;
         return;
     }
 
@@ -60,13 +64,14 @@ void citireDate()
     fin.close();
 }
 
-void afisareDate()
+void printData()
 {
     cout << "\n\n"
          << setw(5) << " "
          << "Oamenii trecuti in baza de data:"
          << "\n"
          << setw(5) << " ";
+
     for (unsigned int i = 0; i < n; i++)
         if (i == n - 1)
             cout << nume[i];
@@ -76,17 +81,16 @@ void afisareDate()
 
 void verifcarePrieten()
 {
-    clear_screen();
+    system("CLS");
 
-    char *numeCautat_1 = new char[101];
-    char *numeCautat_2 = new char[101];
-    bool exista = false;
+    char *numeCautat_1 = new char[101], *numeCautat_2 = new char[101];
+    bool isFound = false;
 
     cout << "\n\n";
     cout << setw(5) << " "
          << "APASA TASTA '0' PENTRU A ANULA";
 
-    afisareDate();
+    printData();
 
     cout << "\n\n"
          << setw(5) << " "
@@ -94,15 +98,18 @@ void verifcarePrieten()
     cout << setw(5) << " "
          << "Nume_1: ";
     cin >> numeCautat_1;
+
     if (strcmp(numeCautat_1, "0") == 0)
     {
         delete[] numeCautat_1;
         delete[] numeCautat_2;
         return;
     }
+
     cout << setw(5) << " "
          << "Nume_2: ";
     cin >> numeCautat_2;
+
     if (strcmp(numeCautat_2, "0") == 0)
     {
         delete[] numeCautat_1;
@@ -112,24 +119,24 @@ void verifcarePrieten()
     else
     {
         cout << "\n";
-        for (int i = 1; i <= n && !exista; i++)
-            for (int j = 1; j <= n && !exista; j++)
+        for (int i = 1; i <= n && !isFound; i++)
+            for (int j = 1; j <= n && !isFound; j++)
                 if (adj[i][j])
                 {
-                    if (strcasecmp(nume[i - 1], numeCautat_1) == 0 && strcasecmp(nume[j - 1], numeCautat_2) == 0)
+                    if (stricmp(nume[i - 1], numeCautat_1) == 0 && stricmp(nume[j - 1], numeCautat_2) == 0)
                     {
                         cout << setw(5) << " " << numeCautat_1 << " este prieten cu " << numeCautat_2;
-                        exista = true;
+                        isFound = true;
                     }
-                    else if (strcasecmp(nume[i - 1], numeCautat_2) == 0 && strcasecmp(nume[j - 1], numeCautat_1) == 0)
+                    else if (stricmp(nume[i - 1], numeCautat_2) == 0 && stricmp(nume[j - 1], numeCautat_1) == 0)
                     {
                         cout << setw(5) << " " << numeCautat_1 << " este prieten cu " << numeCautat_2;
-                        exista = true;
+                        isFound = true;
                     }
                 }
-        if (!exista)
+        if (!isFound)
             cout << setw(5) << " "
-                 << "Nu exista aceasta prietenie!";
+                 << "Nu isFound aceasta prietenie!";
 
         delete[] numeCautat_1;
         delete[] numeCautat_2;
@@ -179,14 +186,17 @@ int gradMaxRec(int i, int contorV)
 void gradMax()
 {
     int maxim = -(n * (n - 1)) / 2, contorV = gradMaxRec(1, 0);
+
     for (unsigned int i = 0; i < contorV; i++)
         if (v[i] > maxim)
             maxim = v[i];
+
     cout << "\n"
          << setw(5) << " "
          << "Numarul maxim de prietenii este: " << maxim << "\n"
          << setw(5) << " "
          << "Persoanele cu numarul acesta de prieteni sunt: ";
+
     for (unsigned int i = 0; i < contorV; i++)
         if (v[i] == maxim)
             cout << nume[i] << " ";
@@ -195,10 +205,12 @@ void gradMax()
 void grafComplet()
 {
     int contor = 0;
+
     for (unsigned int i = 1; i < n; i++)
         for (unsigned int j = 1; j < n; j++)
             if (adj[i][j] == 1 && i < j)
                 contor++;
+
     cout << "\n"
          << setw(5) << " " << (n * (n - 1)) / 2
          << " muchii - " << contor << " muchii ramase = "
@@ -208,12 +220,12 @@ void grafComplet()
 
 int main()
 {
-    citireDate();
+    getData();
 
     int meniu;
     do
     {
-        clear_screen();
+        system("CLS");
 
         cout << "\n\n";
         cout << setw(25) << " "
