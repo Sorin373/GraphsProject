@@ -1,3 +1,9 @@
+/*
+ * This program performs operations on a social network represented as a graph.
+ * The graph is read from a file named "data.in", and various operations can be
+ * performed through a menu-driven interface.
+ */
+
 #include <iostream>
 #include <fstream>
 #include <iomanip>
@@ -6,11 +12,13 @@
 
 using namespace std;
 
-constexpr int MAXN = 100;
+#define DATA "edges.txt"
+#define MAXN 100
+#define MAXL 101
 
 int n, v[MAXN];
 bool **adj;
-char **nume;
+char **name;
 
 void underline(const unsigned int vWidth)
 {
@@ -25,22 +33,22 @@ void underline(const unsigned int vWidth)
 
 void getData()
 {
-    ifstream fin("data.in");
+    ifstream file(DATA);
 
-    if (!fin.is_open())
+    if (!file.is_open())
     {
-        cerr << "Failed to open file!" << endl;
+        cerr << "Failed to open file!\n";
         return;
     }
 
-    fin >> n;
+    file >> n;
 
-    nume = new char *[n];
+    name = new char *[n];
     for (int i = 0; i < n; i++)
-        nume[i] = new char[101];
+        name[i] = new char[MAXL];
 
     for (int i = 0; i < n; i++)
-        fin >> nume[i];
+        file >> name[i];
 
     adj = new bool *[n + 1];
     for (int i = 1; i <= n; i++)
@@ -51,44 +59,44 @@ void getData()
             adj[i][j] = false;
 
     int x, y;
-    while (fin >> x >> y)
+    while (file >> x >> y)
     {
         if (x > n || y > n)
         {
-            cerr << "Input invalid!" << endl;
+            cerr << "Invalid input!\n";
             return;
         }
         adj[x][y] = adj[y][x] = true;
     }
 
-    fin.close();
+    file.close();
 }
 
 void printData()
 {
     cout << "\n\n"
          << setw(5) << " "
-         << "Oamenii trecuti in baza de data:"
+         << "People recorded in the database:"
          << "\n"
          << setw(5) << " ";
 
     for (unsigned int i = 0; i < n; i++)
         if (i == n - 1)
-            cout << nume[i];
+            cout << name[i];
         else
-            cout << nume[i] << ", ";
+            cout << name[i] << ", ";
 }
 
-void verifcarePrieten()
+void checkFriendship()
 {
     system("CLS");
 
-    char *numeCautat_1 = new char[101], *numeCautat_2 = new char[101];
+    char *name_1 = new char[MAXL], *name_2 = new char[MAXL];
     bool isFound = false;
 
     cout << "\n\n";
     cout << setw(5) << " "
-         << "APASA TASTA '0' PENTRU A ANULA";
+         << "PRESS KEY '0' TO CANCEL";
 
     printData();
 
@@ -97,23 +105,23 @@ void verifcarePrieten()
          << "Introduceti numele:\n";
     cout << setw(5) << " "
          << "Nume_1: ";
-    cin >> numeCautat_1;
+    cin >> name_1;
 
-    if (strcmp(numeCautat_1, "0") == 0)
+    if (stricmp(name_1, "0") == 0)
     {
-        delete[] numeCautat_1;
-        delete[] numeCautat_2;
+        delete[] name_1;
+        delete[] name_2;
         return;
     }
 
     cout << setw(5) << " "
          << "Nume_2: ";
-    cin >> numeCautat_2;
+    cin >> name_2;
 
-    if (strcmp(numeCautat_2, "0") == 0)
+    if (stricmp(name_2, "0") == 0)
     {
-        delete[] numeCautat_1;
-        delete[] numeCautat_2;
+        delete[] name_1;
+        delete[] name_2;
         return;
     }
     else
@@ -123,106 +131,107 @@ void verifcarePrieten()
             for (int j = 1; j <= n && !isFound; j++)
                 if (adj[i][j])
                 {
-                    if (stricmp(nume[i - 1], numeCautat_1) == 0 && stricmp(nume[j - 1], numeCautat_2) == 0)
+                    if (stricmp(name[i - 1], name_1) == 0 && stricmp(name[j - 1], name_2) == 0)
                     {
-                        cout << setw(5) << " " << numeCautat_1 << " este prieten cu " << numeCautat_2;
+                        cout << setw(5) << " " << name_1 << " is friends with " << name_2;
                         isFound = true;
                     }
-                    else if (stricmp(nume[i - 1], numeCautat_2) == 0 && stricmp(nume[j - 1], numeCautat_1) == 0)
+                    else if (stricmp(name[i - 1], name_2) == 0 && stricmp(name[j - 1], name_1) == 0)
                     {
-                        cout << setw(5) << " " << numeCautat_1 << " este prieten cu " << numeCautat_2;
+                        cout << setw(5) << " " << name_1 << " is friends with " << name_2;
                         isFound = true;
                     }
                 }
         if (!isFound)
             cout << setw(5) << " "
-                 << "Nu isFound aceasta prietenie!";
+                 << "Not found!\n";
 
-        delete[] numeCautat_1;
-        delete[] numeCautat_2;
+        delete[] name_1;
+        delete[] name_2;
 
         getch();
-        verifcarePrieten();
+        checkFriendship();
     }
 }
 
-void gradNod(int i)
+void nodeDegree(int i)
 {
-    int contor = 0;
+    int cnt = 0;
     if (i >= n)
         return;
     else
     {
-        cout << setw(5) << " " << nume[i - 1] << ": ";
+        cout << setw(5) << " " << name[i - 1] << ": ";
         for (int j = 1; j <= n; j++)
             if (adj[i][j])
             {
-                if (contor > 0)
+                if (cnt > 0)
                     cout << ", ";
-                cout << nume[j - 1];
-                contor++;
+                cout << name[j - 1];
+                cnt++;
             }
-        cout << " (" << contor << " prieteni)\n";
+        cout << " (" << cnt << " friends)\n";
 
-        gradNod(i + 1);
+        nodeDegree(i + 1);
     }
 }
 
-int gradMaxRec(int i, int contorV)
+int maxDegreeRec(int i, int cntV)
 {
-    int contor = 0;
+    int cnt = 0;
     if (i >= n)
-        return contorV;
+        return cntV;
     else
     {
         for (int j = 1; j <= n; j++)
             if (adj[i][j])
-                contor++;
-        v[contorV] = contor;
-        gradMaxRec(i + 1, contorV + 1);
+                cnt++;
+        v[cntV] = cnt;
+        maxDegreeRec(i + 1, cntV + 1);
     }
 }
 
-void gradMax()
+void maxDegree()
 {
-    int maxim = -(n * (n - 1)) / 2, contorV = gradMaxRec(1, 0);
+    int max = -(n * (n - 1)) / 2, cntV = maxDegreeRec(1, 0);
 
-    for (unsigned int i = 0; i < contorV; i++)
-        if (v[i] > maxim)
-            maxim = v[i];
+    for (unsigned int i = 0; i < cntV; i++)
+        if (v[i] > max)
+            max = v[i];
 
     cout << "\n"
          << setw(5) << " "
-         << "Numarul maxim de prietenii este: " << maxim << "\n"
+         << "The maximum number of friends is: " << max << "\n"
          << setw(5) << " "
-         << "Persoanele cu numarul acesta de prieteni sunt: ";
+         << "People with this number of friends are: ";
 
-    for (unsigned int i = 0; i < contorV; i++)
-        if (v[i] == maxim)
-            cout << nume[i] << " ";
+    for (unsigned int i = 0; i < cntV; i++)
+        if (v[i] == max)
+            cout << name[i] << " ";
 }
 
-void grafComplet()
+void completeGraph()
 {
-    int contor = 0;
+    int cnt = 0;
 
     for (unsigned int i = 1; i < n; i++)
         for (unsigned int j = 1; j < n; j++)
             if (adj[i][j] == 1 && i < j)
-                contor++;
+                cnt++;
 
     cout << "\n"
          << setw(5) << " " << (n * (n - 1)) / 2
-         << " muchii - " << contor << " muchii ramase = "
-         << (n * (n - 1)) / 2 - contor
-         << " muchii pana la un graf complet";
+         << " edges - " << cnt << " edges remaining = "
+         << (n * (n - 1)) / 2 - cnt
+         << " edges until a complete graph";
 }
 
 int main()
 {
     getData();
 
-    int meniu;
+    int MENU;
+
     do
     {
         system("CLS");
@@ -233,47 +242,48 @@ int main()
 
         underline(50);
         cout << setw(5) << " "
-             << "1) Verifica daca X este prieten cu Y\n"
+             << "1) Check if X is friends with Y\n"
              << setw(5) << " "
-             << "2) Determina gradele persoanei X\n"
+             << "2) Determine the degrees of person X\n"
              << setw(5) << " "
-             << "3) Persoanele cu nr. maxim de prieteni\n"
+             << "3) People with the maximum number of friends\n"
              << setw(5) << " "
-             << "4) Cate muchii pentru a deveni graf complet\n"
+             << "4) How many edges to become a complete graph\n"
              << setw(5) << " "
              << "0) EXIT";
+
         cout << "\n";
         underline(50);
 
         cout << setw(5) << " "
-             << "Introduceti optiunea: ";
-        cin >> meniu;
+             << "Enter: ";
+        cin >> MENU;
 
-        switch (meniu)
+        switch (MENU)
         {
         case 1:
-            verifcarePrieten();
+            checkFriendship();
             break;
         case 2:
             cout << "\n";
-            gradNod(1);
+            nodeDegree(1);
             getch();
             break;
         case 3:
-            gradMax();
+            maxDegree();
             getch();
             break;
         case 4:
-            grafComplet();
+            completeGraph();
             getch();
             break;
         }
-    } while (meniu != 0);
+    } while (MENU != 0);
 
     for (int i = 0; i < n; i++)
-        delete[] nume[i];
+        delete[] name[i];
 
-    delete[] nume;
+    delete[] name;
 
     for (int i = 1; i <= n; i++)
         delete[] adj[i];
